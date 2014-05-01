@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
+
 import com.nucleartip.album.data.ListDataFetcher;
 import com.nucleartip.album.data.ListDataFetcher.ImageCallback;
 import com.nucleartip.album.R;
@@ -41,15 +44,20 @@ public class ItemsAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-
-        LayoutInflater inflater = (LayoutInflater) mContext.
-        		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.list_item, viewGroup, false);
+        // iF view already exist lets reuse it
+    	if(view == null){
+            LayoutInflater inflater = (LayoutInflater) mContext.
+            		getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.list_item, viewGroup, false);
+    	}
+    	
 
         final Item item = (Item) getItem(i);
         ((TextView) view.findViewById(R.id.main_header)).setText(item.getMainHeader());
         ((TextView) view.findViewById(R.id.secondary_header)).setText(item.getSecondaryHeader());
-
+        ImageView mImage = (ImageView)view.findViewById(R.id.icon);
+        
+        mImage.setImageResource(R.drawable.placeholder);
         // at this point we can return the view, by simply loading a default image into view
         // this will make sure smooth scroll
         
