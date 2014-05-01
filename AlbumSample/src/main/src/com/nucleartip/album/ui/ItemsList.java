@@ -24,81 +24,84 @@ public class ItemsList extends ListFragment {
 	private ItemsAdapter mAdapter;
 	private boolean isEndOfList = false;
 	private ArrayList<Item> mItems;
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mContext = getActivity();
-        mFetcher = ListDataFetcher.getInstance(mContext);
-        mItems = new ArrayList<Item>();
-    	mAdapter = new ItemsAdapter(mItems, getActivity());
-    	setListAdapter(mAdapter);
-    }
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-    	super.onActivityCreated(savedInstanceState);
-        setUpList();
-    }
-    
-    @Override
-    public void onResume() {
-    	super.onResume();
 
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mContext = getActivity();
+		mFetcher = ListDataFetcher.getInstance(mContext);
+		mItems = new ArrayList<Item>();
+		mAdapter = new ItemsAdapter(mItems, getActivity());
+		setListAdapter(mAdapter);
+	}
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setUpList();
+	}
 
-    
-    /*
-     * We will load a fixed numbers of items at a time, instead of loading whole of a list
-     * setup will be more like infinite scroll, until we run out of items to display
-     */
-    private void setUpList(){
-    	// Lets fetch intial set of data
-        performLookup(offset);
-    	getListView().setOnScrollListener(new OnScrollListener(){
+	@Override
+	public void onResume() {
+		super.onResume();
+
+	}
+
+
+	/*
+	 * We will load a fixed numbers of items at a time, instead of loading whole of a list
+	 * setup will be more like infinite scroll, until we run out of items to display
+	 */
+	private void setUpList(){
+		// Lets fetch intial set of data
+		performLookup(offset);
+		getListView().setOnScrollListener(new OnScrollListener(){
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
 				if((firstVisibleItem+visibleItemCount) == totalItemCount && 
 						totalItemCount != 0 && visibleItemCount != totalItemCount){
-			       offset = totalItemCount;
-			       if(!isEndOfList){
-			    	   performLookup(offset);
-			       }
+					if(offset == totalItemCount)
+						return; // lets not requst it again
+					
+					offset = totalItemCount; // Fresh call, request data
+					if(!isEndOfList){
+						performLookup(offset);
+					}
 				}
-				
+
 			}
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				
-			}
-    		
-    	});
-    	
-    }
-    
-    @Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	// release loaders and cache
-    	mFetcher.release();
-    }
-    
-    private void performLookup(int offset){
-    	Bundle args = getArguments();
-    	if(args != null
-    			&& args.containsKey(AlbumConstants.KEY_DATA_TYPE)){
-    		 int dataType = args.getInt(AlbumConstants.KEY_DATA_TYPE);
-    		 mFetcher.getListItems(dataType,offset,new ListManager());
 
-    	}
-    	
-    	
-           		
-    }
-    
-    private class ListManager implements DataCallback{
+			}
+
+		});
+
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// release loaders and cache
+		mFetcher.release();
+	}
+
+	private void performLookup(int offset){
+		Bundle args = getArguments();
+		if(args != null
+				&& args.containsKey(AlbumConstants.KEY_DATA_TYPE)){
+			int dataType = args.getInt(AlbumConstants.KEY_DATA_TYPE);
+			mFetcher.getListItems(dataType,offset,new ListManager());
+
+		}
+
+
+
+	}
+
+	private class ListManager implements DataCallback{
 
 		@Override
 		public void onDataAvailable(ArrayList<Item> list) {
@@ -107,23 +110,23 @@ public class ItemsList extends ListFragment {
 				mItems.addAll(list);
 				mAdapter.notifyDataSetChanged();
 			}else{
-	    		mItems.addAll(list);
-	    		mAdapter.notifyDataSetChanged();
+				mItems.addAll(list);
+				mAdapter.notifyDataSetChanged();
 			}
-			
+
 		}
 
 		@Override
 		public void onError() {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		public void onLimitReached() {
 			isEndOfList = true;
-	    }
-    	
-    }
-    
+		}
+
+	}
+
 }
