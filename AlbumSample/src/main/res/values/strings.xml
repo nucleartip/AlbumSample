@@ -2,10 +2,13 @@
 <resources>
 
     <string name="app_name">AlbumSample</string>
-    <string name="title_section1">Albums</string>
-    <string name="title_section2">Songs</string>
-    <string name="title_section3">Artists</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    
+    <string-array name="drawer_items">
+        <item>Albums</item>
+        <item>Songs</item>
+        <item>Artists</item>
+    </string-array>
 </resources>

@@ -1,9 +1,13 @@
-package com.sample.album.common;
+package com.nucleartip.album.common;
 
 public class Item {
     private String mainHeader;
     private String secondaryHeader;
-
+    private String imageUri;
+    
+    public String getImageUri(){
+    	return imageUri;
+    }
     public String getMainHeader() {
         return mainHeader;
     }
